@@ -1,0 +1,7 @@
+node_modules/
+data/*.sqlite
+data/*.sqlite-wal
+data/*.sqlite-shm
+public/uploads/chat/*
+!public/uploads/chat/.gitkeep
+.env

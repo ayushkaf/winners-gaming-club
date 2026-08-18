@@ -1,0 +1,117 @@
+# ---------------------------------------------------------------------------
+# Dependencies
+# ---------------------------------------------------------------------------
+node_modules/
+package-lock.json.bak
+
+# ---------------------------------------------------------------------------
+# Secrets
+# ---------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+
+# ---------------------------------------------------------------------------
+# Live database — REAL USER DATA. Never commit.
+#
+# Contains user accounts, password hashes, the Club Credit ledger, chat
+# messages and session records. Note that SQLite's write-ahead log and shared
+# memory files hold committed AND uncommitted rows and are frequently LARGER
+# than the .sqlite file itself — excluding only the main database is not
+# enough, which is why every sidecar extension is listed explicitly.
+# ---------------------------------------------------------------------------
+app/data/
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+*.sqlite3
+*.db
+*.db-wal
+*.db-shm
+*.db-journal
+
+# ---------------------------------------------------------------------------
+# User-uploaded content — real files uploaded by real people.
+# The directory structure is kept (via .gitkeep) so a fresh clone still runs.
+# ---------------------------------------------------------------------------
+app/public/uploads/*
+!app/public/uploads/.gitkeep
+!app/public/uploads/*/
+app/public/uploads/**/*
+!app/public/uploads/**/.gitkeep
+
+# ---------------------------------------------------------------------------
+# Generated / build output
+# ---------------------------------------------------------------------------
+site/dist/
+site/out/
+logs/
+*.log
+npm-debug.log*
+
+# ---------------------------------------------------------------------------
+# Editor / OS
+# ---------------------------------------------------------------------------
+.vscode/
+.idea/
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# ---------------------------------------------------------------------------
+# Database, second pass — unanchored, following the file type not the folder.
+#
+# server/db.js makes the database location env-overridable
+# (WGC_DB_PATH || app/data/winners.sqlite), so the file can legitimately be
+# created somewhere the path-anchored `app/data/` rule above would never see.
+# These rules hold wherever it lands.
+#
+# The globs deliberately run PAST the extension: SQLite names its sidecars by
+# appending to the whole filename, so a WGC_DB_PATH of `wgc.sqlite3` yields
+# `wgc.sqlite3-wal` / `wgc.sqlite3-shm`, which `*.sqlite-wal` above does not
+# match — and a WAL fallback on a `.sqlite` file yields `-journal`, which
+# `*.db-journal` does not match either. One trailing `*` covers every present
+# and future sidecar suffix in each family at once.
+#
+# `data/` is unanchored on purpose: `app/data/` above only protects that one
+# directory, and a database given a path with no recognisable extension (e.g.
+# WGC_DB_PATH=./data/wgc) would otherwise be caught by nothing at all.
+# ---------------------------------------------------------------------------
+*.sqlite*
+*.db-*
+data/
+
+# ---------------------------------------------------------------------------
+# User-uploaded content, second pass — unanchored, and directory-safe.
+#
+# This restates the app/public/uploads/ block above rather than trusting it,
+# for two reasons:
+#
+#  1. It follows the `uploads` NAME rather than one hardcoded path, so the
+#     rule survives the upload directory being moved out of public/ (and any
+#     later move) instead of silently going quiet at the moment it matters.
+#  2. The block above ends up excluding the `chat/` directory ITSELF, and git
+#     never descends into an excluded directory — so its `!.../**/.gitkeep`
+#     negation can never fire, and the .gitkeep meant to preserve the
+#     directory structure is unreachable. Re-including the DIRECTORIES (the
+#     trailing slash restricts that negation to directories and never files)
+#     lets git walk back in, leaves every actual upload ignored, and lets the
+#     .gitkeep through so a fresh clone still has somewhere to write.
+# ---------------------------------------------------------------------------
+**/uploads/**
+!**/uploads/**/
+!**/.gitkeep
+
+# ---------------------------------------------------------------------------
+# Secrets — shapes the `.env` / `.env.*` rules above don't reach. Neither a
+# direnv script nor a `<name>.env` file matches `.env.*`, which requires a
+# literal dot straight after "env". `.env.example` is unaffected: it ends in
+# `.example`, so `*.env` never matches it.
+# ---------------------------------------------------------------------------
+.envrc
+*.env
+
+# ---------------------------------------------------------------------------
+# Rotated logs — `*.log` above misses `app.log.1`, `pnpm-debug.log.2`, etc.
+# ---------------------------------------------------------------------------
+*.log.*

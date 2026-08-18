@@ -1,0 +1,39 @@
+<%- include('partials/head', { title, user, activeNav: 'gateway' }) %>
+<div class="container">
+  <div class="page-head">
+    <h1>Payment gateway<%= editingSelf ? '' : ' — ' + target.display_name %></h1>
+    <p>Everything below runs on this club's internal simulated gateway — no real card network, PayPal, Apple Pay, or
+    Google Pay is ever contacted. Toggle a method off and it disappears from <%= editingSelf ? 'your' : `${target.display_name}'s` %>
+    players' "Add Club Credits" page immediately; the fake credential fields are just labels for this dashboard, not
+    real merchant data.</p>
+    <% if (!editingSelf) { %><div class="alert info">You're editing <strong><%= target.staff_id %></strong>'s gateway as owner.</div><% } %>
+  </div>
+  <% if (saved) { %><div class="alert success">Gateway settings saved.</div><% } %>
+
+  <form method="post" action="/gateway<%= !editingSelf ? '?staffId=' + target.staff_id : '' %>">
+    <% methods.forEach(function(m) { const g = gateways.find(x => x.method === m); %>
+    <div class="card" style="margin-bottom:14px;">
+      <div class="btn-row" style="justify-content:space-between;align-items:center;">
+        <h3 style="margin:0;color:var(--gold2);"><%= labels[m] %></h3>
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--dim);">
+          <input type="checkbox" name="enabled_<%= m %>" <%= g.enabled ? 'checked' : '' %> style="width:18px;height:18px;">
+          Enabled
+        </label>
+      </div>
+      <div class="grid-2" style="margin-top:10px;">
+        <div class="field" style="margin:0;">
+          <label>Fake merchant ID / API key</label>
+          <input type="text" name="cred_<%= m %>" value="<%= g.fake_credential || '' %>" placeholder="<%= placeholders[m] %>">
+        </div>
+        <div class="field" style="margin:0;">
+          <label>Status note (shown to you only)</label>
+          <input type="text" name="note_<%= m %>" value="<%= g.status_note || '' %>" placeholder="e.g. down for maintenance">
+        </div>
+      </div>
+      <% if (g.updated_at) { %><p class="hint" style="margin:8px 0 0;">Last updated <%= new Date(g.updated_at).toLocaleString() %></p><% } %>
+    </div>
+    <% }); %>
+    <button class="btn primary" type="submit">Save gateway settings</button>
+  </form>
+</div>
+<%- include('partials/foot') %>

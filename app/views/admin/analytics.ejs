@@ -1,0 +1,36 @@
+<%- include('../partials/head', { title, user, activeNav: 'admin' }) %>
+<div class="container wide">
+  <div class="page-head"><h1>Analytics</h1><p><a href="/admin">&larr; Admin dashboard</a></p></div>
+
+  <div class="grid-auto">
+    <div class="stat-tile"><label>Registered users</label><div class="v"><%= analytics.totalUsers %></div></div>
+    <div class="stat-tile"><label>Active last 24h</label><div class="v ok"><%= analytics.activeToday %></div></div>
+    <div class="stat-tile"><label>Club Credits in circulation</label><div class="v"><%= analytics.circulating.toLocaleString() %></div></div>
+  </div>
+
+  <h2 class="section-title">RTP: live vs. target</h2>
+  <div class="data-table-wrap">
+    <table class="data">
+      <thead><tr><th>Model</th><th class="num">Spins</th><th class="num">Staked</th><th class="num">Won</th><th class="num">Live RTP</th><th class="num">Target RTP</th><th class="num">Delta</th></tr></thead>
+      <tbody>
+        <% analytics.models.forEach(function(m) { %>
+        <tr>
+          <td><%= m.name %> (<%= m.model %>)</td>
+          <td class="num"><%= m.spins.toLocaleString() %></td>
+          <td class="num"><%= m.staked.toLocaleString() %></td>
+          <td class="num"><%= m.won.toLocaleString() %></td>
+          <td class="num"><%= m.liveRTP === null ? '—' : (m.liveRTP*100).toFixed(3) + '%' %></td>
+          <td class="num"><%= (m.targetRTP*100).toFixed(3) %>%</td>
+          <td class="num <%= m.liveRTP === null ? '' : (Math.abs(m.liveRTP - m.targetRTP) < 0.03 ? 'amt-pos' : 'amt-neg') %>">
+            <%= m.liveRTP === null ? '—' : (((m.liveRTP - m.targetRTP)*100).toFixed(3)) + 'pp' %>
+          </td>
+        </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+  <p class="hint" style="margin-top:10px;">Live RTP is measured directly from the ledger (SUM of spin_win / SUM of
+  spin_stake per model) — small samples will drift from target; this is expected sampling variance, not a bug. The
+  statistically rigorous version, validated at tens of millions of spins, is on the owner dashboard.</p>
+</div>
+<%- include('../partials/foot') %>

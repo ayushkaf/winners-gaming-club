@@ -1,0 +1,68 @@
+<%- include('../partials/head', { title, user, activeNav: 'owner' }) %>
+<div class="container wide">
+  <div class="page-head">
+    <h1><%= target.display_name %> <small style="color:var(--dim);font-size:16px;">(<%= target.staff_id %> · <%= target.role %>)</small></h1>
+    <p><%= target.email %> · joined <%= new Date(target.created_at).toLocaleDateString() %> ·
+    <a href="/owner/admins">&larr; Staff accounts</a></p>
+  </div>
+
+  <% if (tempPassword) { %>
+  <div class="alert success">New temporary password for <%= tempPasswordFor %>: <strong style="font-family:monospace;font-size:15px;"><%= tempPassword %></strong>
+  — give this to them now, it won't be shown again.</div>
+  <% } %>
+
+  <div class="grid-3">
+    <div class="stat-tile"><label>Your balance</label><div class="v"><%= myBalance.toLocaleString() %></div><small>Club Credits</small></div>
+    <div class="stat-tile"><label><%= target.display_name %>'s balance</label><div class="v"><%= targetBalance.toLocaleString() %></div><small>Club Credits</small></div>
+    <div class="stat-tile">
+      <label>Status</label>
+      <div class="v <%= target.disabled ? 'warn' : 'ok' %>"><%= target.disabled ? 'Disabled' : 'Active' %></div>
+      <% if (target.id !== user.id) { %>
+      <form method="post" action="/owner/admins/<%= target.id %>/<%= target.disabled ? 'enable' : 'disable' %>" style="margin-top:8px;">
+        <button class="btn sm <%= target.disabled ? '' : 'danger' %>" type="submit"><%= target.disabled ? 'Re-enable account' : 'Disable account' %></button>
+      </form>
+      <% } %>
+    </div>
+  </div>
+
+  <div class="btn-row" style="margin:16px 0;">
+    <form method="post" action="/owner/admins/<%= target.id %>/reset-password-detail" onsubmit="return confirm('Reset this account\'s password?');">
+      <button class="btn ghost sm" type="submit">Reset password</button>
+    </form>
+    <% if (target.staff_id) { %><a class="btn ghost sm" href="/gateway?staffId=<%= target.staff_id %>">Payment gateway</a><% } %>
+  </div>
+
+  <h2 class="section-title">Reload / take out</h2>
+  <div class="card">
+    <p class="hint">A positive amount <strong>reloads</strong> <%= target.display_name %> from your own float
+    (balance-checked, sourced from your mint/float only — never created from nothing). A negative amount
+    <strong>takes credits out</strong> of their float and puts them straight back into yours. Nothing is ever
+    created or destroyed here, only moved.</p>
+    <% if (adjustError) { %><div class="alert error"><%= adjustError %></div><% } %>
+    <form method="post" action="/owner/admins/<%= target.id %>/adjust" class="btn-row" style="align-items:flex-end;flex-wrap:wrap;">
+      <div class="field" style="margin:0;"><label>Amount (use a minus sign to take out)</label><input type="number" name="amount" step="1" required style="width:180px;"></div>
+      <div class="field" style="margin:0;flex:1;min-width:260px;"><label>Reason (required — goes in the ledger)</label><input type="text" name="reason" required placeholder="e.g. weekly float top-up"></div>
+      <button class="btn primary" type="submit">Apply</button>
+    </form>
+  </div>
+
+  <h2 class="section-title">Ledger — this account</h2>
+  <div class="data-table-wrap">
+    <table class="data">
+      <thead><tr><th>When</th><th>Type</th><th class="num">Amount</th><th class="num">Balance after</th><th>Detail</th></tr></thead>
+      <tbody>
+        <% entries.forEach(function(e) { %>
+        <tr>
+          <td><%= new Date(e.ts).toLocaleString() %></td>
+          <td><span class="pill <%= e.type %>"><%= e.type.replace('_',' ') %></span></td>
+          <td class="num <%= e.amount >= 0 ? 'amt-pos' : 'amt-neg' %>"><%= e.amount >= 0 ? '+' : '' %><%= e.amount.toLocaleString() %></td>
+          <td class="num"><%= e.resulting_balance.toLocaleString() %></td>
+          <td class="wrap"><%= e.reason || '' %></td>
+        </tr>
+        <% }); %>
+        <% if (entries.length === 0) { %><tr><td colspan="5" style="color:var(--dim);">No activity yet.</td></tr><% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<%- include('../partials/foot') %>

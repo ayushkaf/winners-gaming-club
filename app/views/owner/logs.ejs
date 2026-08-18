@@ -1,0 +1,28 @@
+<%- include('../partials/head', { title, user, activeNav: 'owner' }) %>
+<div class="container wide">
+  <div class="page-head"><h1>System logs</h1><p><a href="/owner">&larr; Owner dashboard</a></p></div>
+  <div class="btn-row" style="margin-bottom:16px;">
+    <a class="btn <%= !level ? 'gold' : 'ghost' %> sm" href="/owner/logs">All</a>
+    <a class="btn <%= level==='info' ? 'gold' : 'ghost' %> sm" href="/owner/logs?level=info">Info</a>
+    <a class="btn <%= level==='warn' ? 'gold' : 'ghost' %> sm" href="/owner/logs?level=warn">Warnings</a>
+    <a class="btn <%= level==='error' ? 'gold' : 'ghost' %> sm" href="/owner/logs?level=error">Errors</a>
+  </div>
+  <div class="data-table-wrap">
+    <table class="data">
+      <thead><tr><th>When</th><th>Level</th><th>Source</th><th>Message</th><th>Meta</th></tr></thead>
+      <tbody>
+        <% rows.forEach(function(r) { %>
+        <tr>
+          <td><%= new Date(r.ts).toLocaleString() %></td>
+          <td><span class="pill" style="background:<%= r.level==='error' ? 'var(--danger-bg)' : r.level==='warn' ? 'var(--warn-bg)' : 'var(--info-bg)' %>;color:<%= r.level==='error' ? 'var(--danger)' : r.level==='warn' ? 'var(--warn)' : 'var(--info)' %>;"><%= r.level %></span></td>
+          <td><%= r.source %></td>
+          <td class="wrap"><%= r.message %></td>
+          <td class="wrap" style="color:var(--dim);font-size:12px;"><%= r.meta || '' %></td>
+        </tr>
+        <% }); %>
+        <% if (rows.length === 0) { %><tr><td colspan="5" style="color:var(--dim);">No log entries.</td></tr><% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<%- include('../partials/foot') %>

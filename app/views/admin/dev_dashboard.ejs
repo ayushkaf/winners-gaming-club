@@ -1,0 +1,56 @@
+<%- include('../partials/head', { title, user, activeNav: 'admin' }) %>
+<div class="container wide">
+  <div class="page-head">
+    <h1>Developer dashboard</h1>
+    <p>Your Staff ID: <strong><%= user.staff_id %></strong>. You manage the admins you've created — not their
+    players directly, and not any other developer's admins.</p>
+  </div>
+
+  <% if (typeof tempPassword !== 'undefined' && tempPassword) { %>
+  <div class="alert success">New temporary password for <%= tempPasswordFor %>: <strong style="font-family:monospace;font-size:15px;"><%= tempPassword %></strong>
+  — give this to them now, it won't be shown again.</div>
+  <% } %>
+
+  <div class="grid-auto">
+    <div class="stat-tile"><label>Your balance</label><div class="v"><%= balance.toLocaleString() %></div><small>Club Credits</small></div>
+    <div class="stat-tile"><label>Your admins</label><div class="v"><%= admins.length %></div></div>
+    <div class="stat-tile"><label>Active</label><div class="v ok"><%= admins.filter(a => !a.disabled).length %></div></div>
+    <div class="stat-tile"><label>Total players under them</label><div class="v"><%= admins.reduce((s,a) => s + a.playerCount, 0) %></div></div>
+  </div>
+
+  <div class="btn-row" style="margin:20px 0;">
+    <a class="btn primary" href="/admin/my-admins/new">+ Create admin</a>
+    <a class="btn ghost" href="/admin/chat">Support inbox (messages from your admins)</a>
+    <a class="btn ghost" href="/chat">Message your owner</a>
+  </div>
+
+  <h2 class="section-title">Your admins</h2>
+  <div class="data-table-wrap">
+    <table class="data">
+      <thead><tr><th>Staff ID</th><th>Name</th><th>Email</th><th class="num">Balance</th><th class="num">Players</th><th>Status</th><th>Joined</th><th></th></tr></thead>
+      <tbody>
+        <% admins.forEach(function(a) { %>
+        <tr>
+          <td><%= a.staff_id %></td>
+          <td><%= a.display_name %></td>
+          <td><%= a.email %></td>
+          <td class="num"><%= a.balance.toLocaleString() %></td>
+          <td class="num"><%= a.playerCount %></td>
+          <td><% if (a.disabled) { %><span class="pill" style="background:var(--danger-bg);color:var(--danger);">disabled</span><% } else { %><span class="pill" style="background:var(--ok-bg);color:var(--ok);">active</span><% } %></td>
+          <td><%= new Date(a.created_at).toLocaleDateString() %></td>
+          <td>
+            <div class="btn-row">
+              <a class="btn primary sm" href="/admin/my-admins/<%= a.id %>">Open</a>
+              <form method="post" action="/admin/my-admins/<%= a.id %>/<%= a.disabled ? 'enable' : 'disable' %>">
+                <button class="btn sm <%= a.disabled ? '' : 'danger' %>" type="submit"><%= a.disabled ? 'Enable' : 'Disable' %></button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        <% }); %>
+        <% if (admins.length === 0) { %><tr><td colspan="8" style="color:var(--dim);">You haven't created any admins yet.</td></tr><% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<%- include('../partials/foot') %>

@@ -1,0 +1,17 @@
+<%- include('../partials/head', { title, user, activeNav: 'owner' }) %>
+<div class="container">
+  <div class="page-head"><h1>Validation reports</h1><p><a href="/owner">&larr; Owner dashboard</a></p></div>
+  <% if (files.length === 0) { %>
+    <div class="card"><p style="color:var(--dim);">No reports found in reports/.</p></div>
+  <% } else { %>
+    <div class="grid-auto">
+      <% files.forEach(function(f) { %>
+        <a class="card" style="text-decoration:none;color:inherit;" href="/owner/reports/<%= encodeURIComponent(f) %>">
+          <h3 style="margin:0 0 6px;color:var(--gold2);"><%= f %></h3>
+          <p style="color:var(--dim);font-size:13.5px;margin:0;">Open →</p>
+        </a>
+      <% }); %>
+    </div>
+  <% } %>
+</div>
+<%- include('../partials/foot') %>

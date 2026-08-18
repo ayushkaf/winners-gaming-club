@@ -1,0 +1,45 @@
+<%- include('partials/head', { title, user, balance, activeNav: 'account' }) %>
+<div class="container">
+  <div class="page-head">
+    <h1>My account</h1>
+    <p>Signed in as <%= user.display_name %> (<%= user.email %>). Member since <%= new Date(user.created_at).toLocaleDateString() %>.
+    <% if (user.assigned_staff_id) { %>Your support queue is routed to <strong><%= user.assigned_staff_id %></strong>.<% } %></p>
+  </div>
+  <% if (typeof funded !== 'undefined' && funded) { %><div class="alert success">Club Credits added — enjoy!</div><% } %>
+  <div class="grid-3">
+    <div class="stat-tile"><label>Balance</label><div class="v"><%= balance.toLocaleString() %></div><small>Club Credits</small></div>
+    <div class="stat-tile"><label>Spins played</label><div class="v"><%= stats.spins || 0 %></div></div>
+    <div class="stat-tile"><label>Winning spins</label><div class="v ok"><%= stats.wins || 0 %></div></div>
+  </div>
+  <div class="btn-row" style="margin-top:20px;">
+    <a class="btn primary" href="/play">Play now</a>
+    <a class="btn gold" href="/account/topup">Add Club Credits</a>
+    <a class="btn ghost" href="/history">Full transaction history</a>
+    <a class="btn ghost" href="/chat">Contact support</a>
+  </div>
+
+  <h2 class="section-title" style="margin-top:32px;">Responsible play</h2>
+  <div class="card">
+    <% if (limits.self_exclude_until && new Date(limits.self_exclude_until) > new Date()) { %>
+      <div class="alert info">You've paused play until <strong><%= new Date(limits.self_exclude_until).toLocaleString() %></strong>.</div>
+    <% } %>
+    <% if (limitsSaved) { %><div class="alert success">Saved.</div><% } %>
+    <% if (limitsError) { %><div class="alert error"><%= limitsError %></div><% } %>
+    <p class="hint">Today's net loss so far: <strong><%= todayNetLoss.toLocaleString() %></strong> credits<%= limits.daily_loss_limit != null ? ` — your daily limit is ${limits.daily_loss_limit.toLocaleString()}` : '' %>.
+    You can set or tighten a limit here instantly. Loosening or clearing one early always goes through
+    <a href="/chat">support</a> — that's deliberate. Read more on the <a href="/responsible-play">responsible play page</a>.</p>
+    <form method="post" action="/account/limits" class="btn-row" style="align-items:flex-end;flex-wrap:wrap;">
+      <div class="field" style="margin:0;">
+        <label>Take a break until</label>
+        <input type="datetime-local" name="pauseUntil">
+      </div>
+      <div class="field" style="margin:0;">
+        <label>Daily loss limit (credits)</label>
+        <input type="number" name="dailyLossLimit" min="1" step="1" style="width:160px;" placeholder="<%= limits.daily_loss_limit || 'none set' %>">
+      </div>
+      <button class="btn primary" type="submit">Save</button>
+      <button class="btn ghost" type="submit" name="clearAction" value="1">Ask support to adjust</button>
+    </form>
+  </div>
+</div>
+<%- include('partials/foot') %>

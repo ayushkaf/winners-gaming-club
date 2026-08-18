@@ -1,0 +1,64 @@
+<%- include('partials/head', { title, user, activeNav: 'responsible' }) %>
+<div class="container narrow">
+  <div class="page-head">
+    <h1>Need help with gambling?</h1>
+    <p>This page is here on purpose, not as an afterthought. Golden Charge and Thunder Herd are built on the same
+    mechanics — variable-ratio reinforcement, a house edge that wins on average no matter how a session feels — that
+    make real slot machines one of the fastest-escalating forms of gambling harm. Club Credits carry no cash value
+    here, but the psychology is identical, which is exactly why this platform treats it seriously.</p>
+  </div>
+
+  <h2 class="section-title">Common signs it's becoming a problem</h2>
+  <div class="card">
+    <ul style="color:var(--dim);margin:0;padding-left:20px;line-height:1.9;">
+      <li>Chasing losses — increasing bets or playing longer specifically to "win back" what's gone</li>
+      <li>Losing track of time or money spent, or hiding how much/how often you play from people close to you</li>
+      <li>Feeling restless, irritable, or anxious when you try to cut down or stop</li>
+      <li>Playing to escape stress, boredom, or low mood rather than for enjoyment</li>
+      <li>Borrowing money, missing payments, or neglecting responsibilities to keep playing</li>
+    </ul>
+    <p class="hint" style="margin-top:12px;">Recognizing one or two of these doesn't mean something is wrong with
+    you — it means it's worth a conversation, early, before it gets harder to have.</p>
+  </div>
+
+  <h2 class="section-title">Talk to someone</h2>
+  <div class="grid-2">
+    <div class="card">
+      <h3 style="margin-top:0;color:var(--gold2);">Right here, right now</h3>
+      <p style="color:var(--dim);font-size:14px;">Open a <a href="/chat">support chat</a> and say so, plainly. Every
+      account here has a real staff member attached to it — they can set an account-wide loss limit or a break for
+      you, or just talk. <% if (user && user.role === 'user') { %>You can also set your own limit yourself on
+      <a href="/account">your account page</a> right now, no conversation required.<% } %></p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0;color:var(--gold2);">Independent, confidential services</h3>
+      <p style="color:var(--dim);font-size:14px;margin-bottom:8px;">These are widely used, free, and separate from
+      any gambling operator — worth confirming the current number for your country before calling, as they do
+      change:</p>
+      <ul style="color:var(--dim);font-size:14px;margin:0;padding-left:18px;line-height:1.8;">
+        <li><strong>Australia</strong> — Gambling Help Online, 1800 858 858, <span style="white-space:nowrap;">gamblinghelponline.org.au</span></li>
+        <li><strong>UK</strong> — National Gambling Helpline (GamCare), 0808 8020 133, begambleaware.org</li>
+        <li><strong>US</strong> — 1-800-GAMBLER (1-800-426-2537), ncpgambling.org</li>
+        <li><strong>International</strong> — Gamblers Anonymous, gamblersanonymous.org (meeting finder)</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2 class="section-title">What limits actually do here</h2>
+  <div class="card">
+    <p style="color:var(--dim);font-size:14px;">Every account can carry a <strong>daily loss limit</strong> (play
+    stops for the day once net losses hit it) and a <strong>pause</strong> (play stops entirely until a date you or
+    your admin set). A player can set or tighten either one instantly, any time, on
+    <a href="/account">their account page</a> — no approval needed to make it stricter. Loosening or clearing one
+    early always requires talking to support first; that friction is deliberate. These are enforced on the server
+    before every single spin, the same way every balance check on this platform is — there's no client-side toggle
+    that bypasses it.</p>
+  </div>
+
+  <div class="btn-row" style="justify-content:center;margin:32px 0 8px;">
+    <a class="btn ghost" href="/chat">Talk to support</a>
+    <% if (user) { %><a class="btn ghost" href="/account">Manage my limits</a><% } %>
+    <a class="btn primary" href="/">Back home</a>
+  </div>
+</div>
+<%- include('partials/foot') %>

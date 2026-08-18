@@ -1,0 +1,14 @@
+{
+  "name": "toro-math-lab",
+  "version": "1.0.0",
+  "description": "Pokies mechanics research project — two original math models (collector + hold & respin), exact-math tuned, Monte Carlo validated. Research/education only. No gambling.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "tune:a": "node sim/tune.js A",
+    "tune:b": "node sim/tune.js B",
+    "validate:a": "node sim/run.js A 10000000",
+    "validate:b": "node sim/run.js B 10000000",
+    "build:site": "node site/build.js"
+  }
+}

@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title><%= title %> · Winners Gaming Club</title>
+<meta name="description" content="Winners Gaming Club — Club Credits only, no cash value, ever.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='16' fill='%2317100d'/%3E%3Ctext x='50' y='68' font-size='58' text-anchor='middle' fill='%23f0b429'%3E%24%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<% if (!user) { %>
+<div class="disclaimer-banner" role="note">
+  CLUB CREDITS ONLY — NO CASH VALUE &middot; nothing here can be deposited, withdrawn, or cashed out &middot;
+  <a href="/responsible-play" style="color:inherit;text-decoration:underline;">need help gambling?</a>
+</div>
+<% } %>
+<header class="site-header">
+  <a class="brand" href="/">
+    <span class="mark">WINNERS <span>GAMING</span> CLUB</span>
+  </a>
+  <nav class="nav-links">
+    <% if (!user) { %>
+      <a href="/" class="<%= typeof activeNav !== 'undefined' && activeNav === 'home' ? 'active' : '' %>">Home</a>
+    <% } %>
+    <% if (!user || user.role === 'user') { %>
+      <a href="/responsible-play" class="<%= typeof activeNav !== 'undefined' && activeNav === 'responsible' ? 'active' : '' %>">Need help?</a>
+    <% } %>
+    <% if (user) { %>
+      <% if (user.role === 'user') { %>
+        <a href="/play" class="<%= typeof activeNav !== 'undefined' && activeNav === 'play' ? 'active' : '' %>">Play</a>
+        <a href="/history" class="<%= typeof activeNav !== 'undefined' && activeNav === 'history' ? 'active' : '' %>">History</a>
+        <a href="/account/topup" class="<%= typeof activeNav !== 'undefined' && activeNav === 'topup' ? 'active' : '' %>">Add Credits</a>
+        <a href="/chat" class="<%= typeof activeNav !== 'undefined' && activeNav === 'chat' ? 'active' : '' %>">Support</a>
+      <% } %>
+      <% if (user.role === 'admin' || user.role === 'developer' || user.role === 'owner') { %>
+        <a href="/admin" class="<%= typeof activeNav !== 'undefined' && activeNav === 'admin' ? 'active' : '' %>">Admin</a>
+        <a href="/admin/chat" class="<%= typeof activeNav !== 'undefined' && activeNav === 'staffchat' ? 'active' : '' %>">Support Inbox</a>
+        <% if (user.role === 'admin' || user.role === 'developer') { %>
+          <a href="/chat" class="<%= typeof activeNav !== 'undefined' && activeNav === 'chat' ? 'active' : '' %>">Message my manager</a>
+        <% } %>
+        <a href="/wallet" class="<%= typeof activeNav !== 'undefined' && activeNav === 'wallet' ? 'active' : '' %>">Wallet</a>
+        <a href="/gateway" class="<%= typeof activeNav !== 'undefined' && activeNav === 'gateway' ? 'active' : '' %>">Payment Gateway</a>
+      <% } %>
+      <% if (user.role === 'owner') { %>
+        <a href="/owner" class="<%= typeof activeNav !== 'undefined' && activeNav === 'owner' ? 'active' : '' %>">Owner</a>
+      <% } %>
+    <% } %>
+  </nav>
+  <div class="nav-right">
+    <% if (user) { %>
+      <a class="btn ghost sm <%= typeof activeNav !== 'undefined' && activeNav === 'profile' ? 'active' : '' %>" href="/profile" title="Profile &amp; settings">Profile</a>
+      <span class="role-pill <%= user.role %>"><%= user.role %></span>
+      <% if (typeof balance !== 'undefined' && balance !== null) { %>
+        <div class="balance-chip"><span class="amt"><%= balance.toLocaleString() %></span><span class="lbl">Club Cr</span></div>
+      <% } %>
+      <form method="post" action="/logout" style="margin:0;"><button class="btn ghost sm" type="submit">Log out</button></form>
+    <% } else { %>
+      <a class="btn ghost sm" href="/login">Log in</a>
+      <a class="btn gold sm" href="/signup">Join free</a>
+    <% } %>
+  </div>
+</header>
+<main>

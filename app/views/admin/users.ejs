@@ -1,0 +1,34 @@
+<%- include('../partials/head', { title, user, activeNav: 'admin' }) %>
+<div class="container wide">
+  <div class="page-head">
+    <h1>Users</h1>
+    <p><a href="/admin">&larr; Admin dashboard</a></p>
+    <% if (scoped) { %><div class="alert info">Showing only players assigned to you (<%= user.staff_id %>). Developers and owners see every player.</div><% } %>
+  </div>
+  <form method="get" action="/admin/users" class="btn-row" style="margin-bottom:16px;">
+    <input type="text" name="q" placeholder="Search by email or name…" value="<%= q %>" style="flex:1;max-width:360px;">
+    <button class="btn ghost" type="submit">Search</button>
+    <a class="btn primary" href="/admin/users/new">+ Create user</a>
+  </form>
+  <div class="data-table-wrap">
+    <table class="data">
+      <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Assigned to</th><th class="num">Balance</th><th>Status</th><th>Joined</th><th></th></tr></thead>
+      <tbody>
+        <% users.forEach(function(u) { %>
+        <tr>
+          <td>#<%= u.id %></td>
+          <td><%= u.display_name %></td>
+          <td><%= u.email %></td>
+          <td><%= u.assigned_staff_id || '—' %></td>
+          <td class="num"><%= u.balance.toLocaleString() %></td>
+          <td><% if (u.disabled) { %><span class="pill" style="background:var(--danger-bg);color:var(--danger);">disabled</span><% } else { %><span class="pill" style="background:var(--ok-bg);color:var(--ok);">active</span><% } %></td>
+          <td><%= new Date(u.created_at).toLocaleDateString() %></td>
+          <td><a class="btn ghost sm" href="/admin/users/<%= u.id %>">Open</a></td>
+        </tr>
+        <% }); %>
+        <% if (users.length === 0) { %><tr><td colspan="8" style="color:var(--dim);">No users found.</td></tr><% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<%- include('../partials/foot') %>

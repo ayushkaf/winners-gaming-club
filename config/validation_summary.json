@@ -1,0 +1,38 @@
+{
+  "A": {
+    "name": "Golden Charge",
+    "target": 0.9609,
+    "exactRTP": 0.9609,
+    "measuredRTP": 0.9598657933397772,
+    "ci95": [
+      0.9544748677771114,
+      0.9652567189024429
+    ],
+    "hitRate": 0.3336184,
+    "volatilityIndex": 8.69775687471871,
+    "freeFreq": 116.72152578378504,
+    "chargeHitFreq": 35.707271785899195,
+    "maxWinMultiple": 5123.066666666667,
+    "deadMax": 38,
+    "spins": 10000000,
+    "seed": 20260808
+  },
+  "B": {
+    "name": "Thunder Herd",
+    "target": 0.961,
+    "exactRTP": 0.961,
+    "measuredRTP": 0.960959364939362,
+    "ci95": [
+      0.9577436477111398,
+      0.9641750821675841
+    ],
+    "hitRate": 0.33600661666666665,
+    "volatilityIndex": 12.70859109287384,
+    "featureFreq": 121.23808330672831,
+    "grandFreq": 13117.621337997376,
+    "maxWinMultiple": 3192,
+    "deadMax": 41,
+    "spins": 60000000,
+    "seed": 999
+  }
+}

@@ -1,0 +1,21 @@
+<%- include('../partials/head', { title, user, balance, activeNav: 'admin' }) %>
+<div class="container wide">
+  <div class="page-head">
+    <h1>Admin dashboard</h1>
+    <p>Tier 2 — manages only the players assigned to your own Staff ID.
+    <% if (user.staff_id) { %>Your Staff ID: <strong><%= user.staff_id %></strong> — share it with players so they can route signups and support requests to you.<% } %></p>
+    <div class="alert info">You're seeing only players assigned to you. Platform-wide stats and other admins' players aren't visible here — that's owner-only.</div>
+  </div>
+
+  <div class="grid-auto">
+    <div class="stat-tile"><label>Your balance</label><div class="v"><%= balance.toLocaleString() %></div><small>Club Credits — <a href="/wallet">Wallet →</a></small></div>
+  </div>
+
+  <div class="btn-row" style="margin:20px 0;">
+    <a class="btn primary" href="/admin/users">Manage users</a>
+    <a class="btn ghost" href="/admin/chat">Support chat</a>
+    <a class="btn ghost" href="/admin/users/new">+ Create user</a>
+    <a class="btn ghost" href="/wallet">Wallet</a>
+  </div>
+</div>
+<%- include('../partials/foot') %>

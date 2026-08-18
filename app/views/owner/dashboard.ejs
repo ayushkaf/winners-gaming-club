@@ -1,0 +1,50 @@
+<%- include('../partials/head', { title, user, activeNav: 'owner' }) %>
+<div class="container wide">
+  <div class="page-head">
+    <h1>Owner dashboard</h1>
+    <p>Tier 1 — full system config, validation reports, logs, and admin-account management.</p>
+  </div>
+
+  <div class="grid-auto">
+    <% counts.forEach(function(c) { %>
+      <div class="stat-tile"><label><%= c.role %> accounts</label><div class="v"><%= c.n %></div></div>
+    <% }); %>
+    <div class="stat-tile"><label>Logged errors</label><div class="v <%= errorCount > 0 ? 'warn' : 'ok' %>"><%= errorCount %></div></div>
+    <div class="stat-tile">
+      <label>Ledger integrity</label>
+      <div class="v <%= integrity.ok ? 'ok' : 'warn' %>"><%= integrity.ok ? 'CLEAN' : integrity.problems.length + ' issue(s)' %></div>
+      <small>checked <%= integrity.checkedUsers %> users</small>
+    </div>
+  </div>
+
+  <div class="btn-row" style="margin:20px 0;">
+    <a class="btn primary" href="/owner/config">System configuration</a>
+    <a class="btn ghost" href="/owner/reports">Validation reports</a>
+    <a class="btn ghost" href="/owner/logs">System logs</a>
+    <a class="btn ghost" href="/owner/admins">Staff accounts</a>
+  </div>
+
+  <h2 class="section-title">Model comparison &amp; RTP</h2>
+  <p class="hint">This table — and the underlying validation reports — is owner-only. Players never see exact RTP,
+  hit rate, or volatility figures; the public site only explains how the games work.</p>
+  <div class="data-table-wrap">
+    <table class="data">
+      <thead><tr><th></th><th>Golden Charge</th><th>Thunder Herd</th></tr></thead>
+      <tbody>
+        <tr><td>Target RTP</td><td class="num"><%= (snapshot.A.targetRTP*100).toFixed(2) %>%</td><td class="num"><%= (snapshot.B.targetRTP*100).toFixed(2) %>%</td></tr>
+        <tr><td>Validated RTP</td><td class="num"><%= (snapshot.A.exactRTP*100).toFixed(4) %>%</td><td class="num"><%= (snapshot.B.solvedRTP*100).toFixed(4) %>%</td></tr>
+        <% if (summary && summary.A && summary.B) { %>
+        <tr><td>Hit rate</td><td class="num"><%= (summary.A.hitRate*100).toFixed(2) %>%</td><td class="num"><%= (summary.B.hitRate*100).toFixed(2) %>%</td></tr>
+        <tr><td>Volatility index</td><td class="num"><%= summary.A.volatilityIndex.toFixed(2) %></td><td class="num"><%= summary.B.volatilityIndex.toFixed(2) %></td></tr>
+        <tr><td>Feature frequency</td><td class="num">1 in <%= Math.round(summary.A.freeFreq) %></td><td class="num">1 in <%= Math.round(summary.B.featureFreq) %></td></tr>
+        <% } %>
+        <tr><td>Coin mean</td><td class="num"><%= snapshot.A.muCoin.toFixed(2) %>cr</td><td class="num"><%= snapshot.B.muCoin.toFixed(2) %>cr</td></tr>
+        <tr><td>Silver mean</td><td class="num"><%= snapshot.A.muSilver.toFixed(2) %>cr</td><td class="num">—</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="hint" style="margin-top:8px;"><a href="/owner/reports">Full validation reports →</a></p>
+  <p class="hint">Engine math (core/, models/, the tuned coin-value weights) is not editable from this dashboard —
+  it's fixed to the validated build. Only feature availability and bet limits are configurable here.</p>
+</div>
+<%- include('../partials/foot') %>

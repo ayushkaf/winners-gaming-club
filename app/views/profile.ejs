@@ -1,0 +1,59 @@
+<%- include('partials/head', { title, user, activeNav: 'profile' }) %>
+<div class="container">
+  <div class="page-head">
+    <h1>Profile</h1>
+    <p>Signed in as <%= user.display_name %> (<%= user.email %>) · <span class="role-pill <%= user.role %>"><%= user.role %></span>
+    <% if (user.staff_id) { %> · Staff ID <strong><%= user.staff_id %></strong><% } %>
+    <% if (user.role !== 'user' && user.role !== 'owner') { %> · reports to <strong><%= user.assigned_staff_id || 'no one yet' %></strong><% } %></p>
+  </div>
+
+  <% if (isPlayer) { %>
+  <h2 class="section-title">Your play</h2>
+  <div class="grid-3">
+    <div class="stat-tile"><label>Spins</label><div class="v"><%= summary.spins || 0 %></div></div>
+    <div class="stat-tile"><label>Total staked</label><div class="v"><%= summary.staked.toLocaleString() %></div></div>
+    <div class="stat-tile"><label>Total won</label><div class="v ok"><%= summary.won.toLocaleString() %></div></div>
+    <div class="stat-tile"><label>Winning spins</label><div class="v ok"><%= summary.winningSpins || 0 %></div></div>
+    <div class="stat-tile"><label>Net</label><div class="v <%= summary.net >= 0 ? 'ok' : 'warn' %>"><%= summary.net >= 0 ? '+' : '' %><%= summary.net.toLocaleString() %></div></div>
+    <div class="stat-tile"><label>Full history</label><div style="margin-top:6px;"><a class="btn ghost sm" href="/history">View all →</a></div></div>
+  </div>
+
+  <h2 class="section-title">Responsible play</h2>
+  <div class="card">
+    <% if (limits.self_exclude_until && new Date(limits.self_exclude_until) > new Date()) { %>
+      <div class="alert info">You've paused play until <strong><%= new Date(limits.self_exclude_until).toLocaleString() %></strong>.</div>
+    <% } %>
+    <% if (limitsSaved) { %><div class="alert success">Saved.</div><% } %>
+    <% if (limitsError) { %><div class="alert error"><%= limitsError %></div><% } %>
+    <p class="hint">Today's net loss so far: <strong><%= todayNetLoss.toLocaleString() %></strong> credits<%= limits.daily_loss_limit != null ? ` — your daily limit is ${limits.daily_loss_limit.toLocaleString()}` : '' %>.
+    Set or tighten a limit here instantly. Loosening or clearing one early always goes through
+    <a href="/chat">support</a> — that's deliberate. More on the <a href="/responsible-play">responsible play page</a>.</p>
+    <form method="post" action="/account/limits" class="btn-row" style="align-items:flex-end;flex-wrap:wrap;">
+      <div class="field" style="margin:0;">
+        <label>Take a break until</label>
+        <input type="datetime-local" name="pauseUntil">
+      </div>
+      <div class="field" style="margin:0;">
+        <label>Daily loss limit (credits)</label>
+        <input type="number" name="dailyLossLimit" min="1" step="1" style="width:160px;" placeholder="<%= limits.daily_loss_limit || 'none set' %>">
+      </div>
+      <button class="btn primary" type="submit">Save</button>
+      <button class="btn ghost" type="submit" name="clearAction" value="1">Ask support to adjust</button>
+    </form>
+  </div>
+  <% } %>
+
+  <h2 class="section-title" style="margin-top:32px;">Change password</h2>
+  <div class="card">
+    <% if (passwordSaved) { %><div class="alert success">Password changed.</div><% } %>
+    <% if (passwordError) { %><div class="alert error"><%= passwordError %></div><% } %>
+    <form method="post" action="/profile/password">
+      <div class="field"><label>Current password</label><input type="password" name="currentPassword" required autocomplete="current-password"></div>
+      <div class="field"><label>New password</label><input type="password" name="newPassword" required minlength="8" autocomplete="new-password"></div>
+      <button class="btn primary" type="submit">Change password</button>
+    </form>
+    <p class="hint" style="margin-top:10px;">Can't remember your current password? <a href="/forgot-password">Reset it by email</a> instead,
+    or ask <%= user.role === 'user' ? 'your assigned admin' : user.role === 'owner' ? 'another owner' : 'whoever you report to' %> to reset it for you.</p>
+  </div>
+</div>
+<%- include('partials/foot') %>

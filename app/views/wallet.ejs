@@ -1,0 +1,62 @@
+<%- include('partials/head', { title, user, activeNav: 'wallet' }) %>
+<div class="container">
+  <div class="page-head">
+    <h1>My wallet</h1>
+    <p>Your float — the Club Credits you've received down the chain and can pass along. Nothing here is real money;
+    every "payment" and "transfer" only ever moves Club Credits between accounts on this ledger.</p>
+  </div>
+
+  <div class="stat-tile" style="max-width:260px;margin-bottom:20px;">
+    <label>Float balance</label><div class="v"><%= balance.toLocaleString() %></div><small>Club Credits</small>
+  </div>
+
+  <% if (user.role === 'owner') { %>
+  <h2 class="section-title">Mint credits</h2>
+  <div class="card">
+    <p class="hint">Only the owner can create Club Credits from nothing. Every mint is its own permanent, auditable
+    ledger row — this is the one place in the whole system where credits originate.</p>
+    <% if (mintError) { %><div class="alert error"><%= mintError %></div><% } %>
+    <form method="post" action="/wallet/mint" class="btn-row" style="align-items:flex-end;flex-wrap:wrap;">
+      <div class="field" style="margin:0;"><label>Amount</label><input type="number" name="amount" min="1" step="1" required style="width:160px;" placeholder="1000000"></div>
+      <div class="field" style="margin:0;flex:1;min-width:220px;"><label>Note (optional)</label><input type="text" name="note" placeholder="e.g. quarterly float top-up"></div>
+      <button class="btn primary" type="submit">Mint</button>
+    </form>
+  </div>
+  <% } %>
+
+  <h2 class="section-title">Send credits</h2>
+  <div class="card">
+    <p class="hint">
+      <% if (user.role === 'owner') { %>Send to any account — staff or player.
+      <% } else if (user.role === 'developer') { %>Send to any admin or player.
+      <% } else { %>Send to one of your own assigned players.<% } %>
+    </p>
+    <% if (transferError) { %><div class="alert error"><%= transferError %></div><% } %>
+    <form method="post" action="/wallet/transfer" class="btn-row" style="align-items:flex-end;flex-wrap:wrap;">
+      <div class="field" style="margin:0;"><label>Recipient email</label><input type="email" name="email" required style="width:240px;"></div>
+      <div class="field" style="margin:0;"><label>Amount</label><input type="number" name="amount" min="1" step="1" required style="width:140px;"></div>
+      <div class="field" style="margin:0;flex:1;min-width:200px;"><label>Note (optional)</label><input type="text" name="note"></div>
+      <button class="btn primary" type="submit">Send</button>
+    </form>
+  </div>
+
+  <h2 class="section-title">Recent activity</h2>
+  <div class="data-table-wrap">
+    <table class="data">
+      <thead><tr><th>When</th><th>Type</th><th class="num">Amount</th><th class="num">Balance after</th><th>Note</th></tr></thead>
+      <tbody>
+        <% entries.forEach(function(e) { %>
+        <tr>
+          <td><%= new Date(e.ts).toLocaleString() %></td>
+          <td><span class="pill <%= e.type %>"><%= e.type.replace('_',' ') %></span></td>
+          <td class="num <%= e.amount >= 0 ? 'amt-pos' : 'amt-neg' %>"><%= e.amount >= 0 ? '+' : '' %><%= e.amount.toLocaleString() %></td>
+          <td class="num"><%= e.resulting_balance.toLocaleString() %></td>
+          <td class="wrap"><%= e.reason || '' %></td>
+        </tr>
+        <% }); %>
+        <% if (entries.length === 0) { %><tr><td colspan="5" style="color:var(--dim);">No mint/transfer activity yet.</td></tr><% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<%- include('partials/foot') %>

@@ -1,0 +1,42 @@
+<%- include('partials/head', { title, user, activeNav: 'signup' }) %>
+<div class="container narrow">
+  <div class="card auth-card">
+    <h2 style="font-family:var(--font-display);text-transform:uppercase;letter-spacing:.02em;color:var(--gold);font-weight:400;font-size:26px;">Join Winners Gaming Club</h2>
+    <p style="color:var(--dim);font-size:14.5px;">Free to join. Every credit on this platform is a <strong>Club Credit</strong> —
+    it has no cash value, can't be bought or withdrawn, and is only ever used to play Golden Charge and Thunder Herd.</p>
+    <% if (error) { %><div class="alert error"><%= error %></div><% } %>
+    <form method="post" action="/signup">
+      <div class="field">
+        <label for="displayName">Display name</label>
+        <input type="text" id="displayName" name="displayName" required value="<%= form.displayName || '' %>">
+      </div>
+      <div class="field">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required autocomplete="email" value="<%= form.email || '' %>">
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required minlength="8" autocomplete="new-password">
+        <span class="hint">At least 8 characters.</span>
+      </div>
+      <div class="field">
+        <span class="demo-credit-note">Every new account starts with a fixed 20 Club Credits — no cash value.
+        No card, no payment, no choice to make here; it's the same for everyone.</span>
+      </div>
+      <div class="field">
+        <label for="address">Where are you playing from? (optional)</label>
+        <input type="text" id="address" name="address" placeholder="City, country — anything you like" value="<%= form.address || '' %>">
+        <span class="hint">Self-reported, never verified — just lets support give you better help if you ask for it.</span>
+      </div>
+      <div class="field">
+        <label for="staffId">Admin ID (optional)</label>
+        <input type="text" id="staffId" name="staffId" placeholder="e.g. ADMIN01" style="text-transform:uppercase;" value="<%= form.staffId || '' %>">
+        <span class="hint">Have a specific staff member's Admin ID? Enter it to route your support queue to them
+        right away. Leave blank and you can set this later from the support chat page.</span>
+      </div>
+      <button class="btn primary" type="submit" style="width:100%;">Create account</button>
+    </form>
+    <p style="margin-top:16px;color:var(--dim);font-size:14px;">Already have an account? <a href="/login">Log in</a></p>
+  </div>
+</div>
+<%- include('partials/foot') %>

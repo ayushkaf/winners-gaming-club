@@ -1,0 +1,25 @@
+{
+  "name": "winners-gaming-club",
+  "version": "1.0.0",
+  "description": "Winners Gaming Club — demo-credit slots platform (owner/admin/user tiers) built on the Toro Math Lab engines. No real money anywhere in this build.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node server/index.js",
+    "seed": "node server/seed.js",
+    "build:reeldata": "node server/buildReelData.js",
+    "test:ledger": "node server/test_ledger_integrity.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^2.2.0",
+    "nodemailer": "^9.0.5",
+    "ws": "^8.18.0"
+  }
+}

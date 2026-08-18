@@ -1,0 +1,28 @@
+<%- include('partials/head', { title, user, balance, activeNav: 'history' }) %>
+<div class="container wide">
+  <div class="page-head">
+    <h1>Transaction history</h1>
+    <p>Every credit you've ever received or spent, in order. This is a direct mirror of the ledger — your balance
+    (<strong><%= balance.toLocaleString() %> Club Credits</strong>) is always the sum of every row below, never a
+    number we store separately.</p>
+  </div>
+  <div class="data-table-wrap">
+    <table class="data">
+      <thead><tr><th>When</th><th>Type</th><th>Model</th><th class="num">Amount</th><th class="num">Balance after</th><th>Detail</th></tr></thead>
+      <tbody>
+        <% entries.forEach(function(e) { %>
+        <tr>
+          <td><%= new Date(e.ts).toLocaleString() %></td>
+          <td><span class="pill <%= e.type %>"><%= e.type.replace('_',' ') %></span></td>
+          <td><%= e.model || '—' %></td>
+          <td class="num <%= e.amount >= 0 ? 'amt-pos' : 'amt-neg' %>"><%= e.amount >= 0 ? '+' : '' %><%= e.amount.toLocaleString() %></td>
+          <td class="num"><%= e.resulting_balance.toLocaleString() %></td>
+          <td class="wrap"><%= e.reason || '' %></td>
+        </tr>
+        <% }); %>
+        <% if (entries.length === 0) { %><tr><td colspan="6" style="color:var(--dim);">No activity yet — go spin something.</td></tr><% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<%- include('partials/foot') %>

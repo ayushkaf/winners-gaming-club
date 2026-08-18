@@ -1,0 +1,27 @@
+<%- include('../partials/head', { title, user, activeNav: 'admin' }) %>
+<div class="container wide">
+  <% const managesNoun = { admin: 'players', developer: 'admins', owner: 'developers' }[user.role]; %>
+  <div class="page-head">
+    <h1>Support Inbox</h1>
+    <p>Your Staff ID: <strong><%= user.staff_id %></strong> — this is what <%= managesNoun %> see next to your
+    replies, and (for players routing to an admin) what they enter to reach you.
+    <% if (user.role !== 'owner') { %> Need to message the person <em>above</em> you instead? Use <a href="/chat">your own line</a>.<% } %>
+    <a href="/admin">&larr; Dashboard</a></p>
+  </div>
+  <div class="chat-wrap">
+    <div class="chat-threads" id="chatThreads"></div>
+    <div class="chat-main">
+      <div class="chat-messages" id="chatMessages"></div>
+      <div class="chat-pending-image hidden" id="chatPendingImage"></div>
+      <form class="chat-input-row" id="chatForm">
+        <input type="file" id="chatFileInput" accept="image/png,image/jpeg,image/gif,image/webp" hidden>
+        <button class="side-btn" id="chatAttachBtn" type="button" title="Attach a photo or screenshot">📎</button>
+        <input type="text" id="chatInput" placeholder="Select a conversation, then type a reply…" maxlength="2000" autocomplete="off">
+        <button class="btn primary" type="submit">Send</button>
+      </form>
+    </div>
+  </div>
+</div>
+<script>window.WGC_CHAT = { isStaff: true, watchUserId: <%= initialUserId || 'null' %>, meId: <%= user.id %> };</script>
+<script src="/js/chat.js"></script>
+<%- include('../partials/foot') %>

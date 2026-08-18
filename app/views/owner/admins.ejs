@@ -1,0 +1,63 @@
+<%- include('../partials/head', { title, user, activeNav: 'owner' }) %>
+<div class="container wide">
+  <div class="page-head"><h1>Staff accounts</h1><p><a href="/owner">&larr; Owner dashboard</a></p></div>
+  <% if (typeof tempPassword !== 'undefined' && tempPassword) { %>
+  <div class="alert success">New temporary password for <%= tempPasswordFor %>: <strong style="font-family:monospace;font-size:15px;"><%= tempPassword %></strong>
+  — give this to them now, it won't be shown again.</div>
+  <% } %>
+  <p class="hint" style="margin-bottom:16px;">Every admin and developer gets a Staff ID (e.g. <code>ADMIN01</code>).
+  Players can quote this ID at signup or in their first support message to route themselves to a specific staff
+  member — see <a href="/owner/config">System configuration</a> for how that assignment works.</p>
+  <div class="btn-row" style="margin-bottom:16px;"><a class="btn primary" href="/owner/admins/new">+ Create staff account</a></div>
+
+  <% ['owner', 'developer', 'admin'].forEach(function(sectionRole) { %>
+  <h2 class="section-title"><%= sectionRole === 'owner' ? 'Owners' : sectionRole === 'developer' ? 'Developers' : 'Admins' %></h2>
+  <div class="data-table-wrap" style="margin-bottom:24px;">
+    <table class="data">
+      <thead><tr><th>Staff ID</th><th>Name</th><th>Email</th><th class="num">Balance</th><th>Reports to</th><th>Status</th><th></th></tr></thead>
+      <tbody>
+        <% const sectionRows = rows.filter(r => r.role === sectionRole); %>
+        <% sectionRows.forEach(function(r) { %>
+        <tr>
+          <td><%= r.staff_id || '—' %></td>
+          <td><%= r.display_name %></td>
+          <td><%= r.email %></td>
+          <td class="num"><%= r.balance.toLocaleString() %></td>
+          <td>
+            <% if (r.role === 'owner') { %><span class="hint">— (top tier)</span><% } else { %>
+              <%= r.assigned_staff_id || '—' %>
+              <form method="post" action="/owner/admins/<%= r.id %>/assign" style="display:inline-flex;gap:4px;margin-left:6px;">
+                <input type="text" name="staffId" placeholder="<%= r.role === 'admin' ? 'DEV01' : 'OWNER01' %>" style="width:90px;padding:4px 6px;font-size:12px;text-transform:uppercase;">
+                <button class="btn ghost sm" type="submit">Set</button>
+              </form>
+            <% } %>
+          </td>
+          <td><% if (r.disabled) { %><span class="pill" style="background:var(--danger-bg);color:var(--danger);">disabled</span><% } else { %><span class="pill" style="background:var(--ok-bg);color:var(--ok);">active</span><% } %></td>
+          <td>
+            <div class="btn-row">
+              <% if (r.role !== 'owner') { %><a class="btn primary sm" href="/owner/admins/<%= r.id %>">Open</a><% } %>
+              <% if (r.staff_id) { %><a class="btn ghost sm" href="/gateway?staffId=<%= r.staff_id %>">Gateway</a><% } %>
+              <% if (r.id !== user.id) { %>
+                <form method="post" action="/owner/admins/<%= r.id %>/<%= r.disabled ? 'enable' : 'disable' %>"><button class="btn sm <%= r.disabled ? '' : 'danger' %>" type="submit"><%= r.disabled ? 'Enable' : 'Disable' %></button></form>
+                <form method="post" action="/owner/admins/<%= r.id %>/role" class="btn-row" style="gap:6px;">
+                  <select name="role" style="padding:6px 8px;font-size:13px;">
+                    <option value="admin" <%= r.role==='admin' ? 'selected' : '' %>>admin</option>
+                    <option value="developer" <%= r.role==='developer' ? 'selected' : '' %>>developer</option>
+                    <option value="owner" <%= r.role==='owner' ? 'selected' : '' %>>owner</option>
+                  </select>
+                  <button class="btn ghost sm" type="submit">Set role</button>
+                </form>
+              <% } else { %>
+                <span class="hint">(you)</span>
+              <% } %>
+            </div>
+          </td>
+        </tr>
+        <% }); %>
+        <% if (sectionRows.length === 0) { %><tr><td colspan="7" style="color:var(--dim);">None yet.</td></tr><% } %>
+      </tbody>
+    </table>
+  </div>
+  <% }); %>
+</div>
+<%- include('../partials/foot') %>

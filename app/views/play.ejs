@@ -1,0 +1,94 @@
+<%- include('partials/head', { title, user, balance, activeNav: 'play' }) %>
+<div class="container">
+  <% if (welcome) { %>
+    <div class="alert success">Welcome to Winners Gaming Club! Your signup bonus has been credited — check the balance below. Good luck (it doesn't cost anything to find out).</div>
+  <% } %>
+  <div class="page-head">
+    <h1>The floor</h1>
+    <p>Every spin is resolved on the server by the exact validated engine — nothing here is decided in your browser.
+    Played entirely in Club Credits, no cash value.</p>
+  </div>
+  <% if (blockReason) { %><div class="alert error" id="playBlockedAlert"><%= blockReason %> — <a href="/chat">talk to support</a>.</div><% } %>
+
+  <div class="machine-wrap">
+    <div class="jackpot-ticker ticker-a">
+      <div class="seg t1">Charge Hit<small>Collector</small></div>
+      <div class="seg t2">Free Games<small>3+ Gates</small></div>
+      <div class="seg t3">Silver Flip<small>2nd Prize</small></div>
+      <div class="seg t4">Gold Nugget<small>Top Symbol</small></div>
+      <div class="seg t5">Max Win<small>5,123&times; bet</small></div>
+    </div>
+    <div class="jackpot-ticker ticker-b">
+      <div class="seg t1">Hold &amp; Respin<small>3 Spins</small></div>
+      <div class="seg t2">Stampede<small>2nd Phase</small></div>
+      <div class="seg t3">Grand Chase<small>Diamond Bull</small></div>
+      <div class="seg t4">Collector Bull<small>Sweeps All</small></div>
+      <div class="seg t5">Max Win<small>3,192&times; bet</small></div>
+    </div>
+    <div class="machine-top">
+      <div class="tabs" id="modelTabs">
+        <button class="tab active" data-model="A" <%= modelAEnabled ? '' : 'disabled' %>>GOLDEN CHARGE <small>collector</small></button>
+        <button class="tab" data-model="B" <%= modelBEnabled ? '' : 'disabled' %>>THUNDER HERD <small>hold &amp; respin</small></button>
+      </div>
+      <div class="audio-controls">
+        <button class="side-btn" id="audioMuteBtn" type="button" title="Mute/unmute" style="padding:8px 12px;">🔊</button>
+        <input type="range" id="audioVolume" min="0" max="1" step="0.05" title="Volume">
+      </div>
+    </div>
+
+    <div class="marquee marquee-top" aria-hidden="true">
+      <% for (let i = 0; i < 16; i++) { %><span class="bulb" style="animation-delay:<%= (i * 0.11).toFixed(2) %>s"></span><% } %>
+    </div>
+    <div class="stage">
+      <div id="lightBurst"></div>
+      <canvas id="reelCanvas" width="680" height="360"></canvas>
+      <canvas id="coinCanvas" width="680" height="360"></canvas>
+      <div id="featureOverlay" class="overlay hidden"></div>
+      <div id="winBanner" class="win-banner hidden"><div class="txt"></div></div>
+      <div id="msgOverlay" class="msg hidden"></div>
+    </div>
+    <div class="marquee marquee-bottom" aria-hidden="true">
+      <% for (let i = 0; i < 16; i++) { %><span class="bulb" style="animation-delay:<%= (i * 0.11 + 0.35).toFixed(2) %>s"></span><% } %>
+    </div>
+
+    <div class="machine-bar">
+      <div class="meter"><label>Balance</label><div class="v" id="balanceCr"><%= balance.toLocaleString() %></div></div>
+      <div class="bet-controls">
+        <label>Total bet</label>
+        <select id="betAmount"></select>
+      </div>
+      <div class="meter win"><label>Win</label><div class="v" id="winCr">0</div></div>
+      <button id="turboBtn" class="side-btn" type="button" <%= blockReason ? 'disabled' : '' %>>TURBO<br><small id="turboState">off</small></button>
+      <button id="autoBtn" class="side-btn" type="button" <%= blockReason ? 'disabled' : '' %>>AUTOPLAY<br><small id="autoState">off</small></button>
+      <button id="spinBtn" <%= blockReason ? 'disabled' : '' %>>SPIN</button>
+    </div>
+
+    <div class="autoplay-panel hidden" id="autoplayPanel">
+      <label>Spins</label>
+      <select id="autoCount"><option>10</option><option>25</option><option selected>50</option><option>100</option></select>
+      <label>Stop if win exceeds</label>
+      <input type="number" id="autoWinLimit" min="0" step="1" placeholder="no limit" style="width:110px;">
+      <label>Stop if balance drops below</label>
+      <input type="number" id="autoLossLimit" min="0" step="1" placeholder="no limit" style="width:110px;">
+      <button class="btn primary sm" id="autoStart" type="button">Start autoplay</button>
+      <button class="btn ghost sm" id="autoStop" type="button" disabled>Stop</button>
+      <span id="autoStatus" style="color:var(--dim);font-size:12.5px;"></span>
+    </div>
+
+    <div id="eventLog" class="event-log" aria-live="polite"></div>
+    <p class="hint" style="margin-top:8px;">Club Credits have no cash value and can't be cashed out or exchanged for
+    money. Need more? <a href="/chat">Ask support</a> · Playing too much? <a href="/responsible-play">Get help</a>.</p>
+  </div>
+</div>
+<script>
+window.WGC_PLAY = {
+  balance: <%= balance %>,
+  baseBet: <%= snapshot.baseBet %>,
+  minBet: <%= betRange.min %>,
+  maxBet: <%= betRange.max %>,
+  modelAEnabled: <%= modelAEnabled ? 'true' : 'false' %>,
+  modelBEnabled: <%= modelBEnabled ? 'true' : 'false' %>,
+};
+</script>
+<script type="module" src="/js/play.js"></script>
+<%- include('partials/foot') %>

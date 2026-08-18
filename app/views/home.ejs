@@ -1,0 +1,123 @@
+<%- include('partials/head', { title, user, activeNav: 'home' }) %>
+<div class="container wide">
+
+  <section style="padding:56px 0 20px;text-align:center;">
+    <h1 style="font:400 clamp(36px,6vw,58px) var(--font-display);letter-spacing:.02em;text-transform:uppercase;margin:0;text-wrap:balance;text-shadow:0 2px 0 #000, 0 0 30px rgba(240,180,41,.3);">
+      Play the herd. <span style="color:var(--gold);">Chase the charge.</span>
+    </h1>
+    <p style="max-width:680px;margin:16px auto 0;color:var(--dim);font-size:17px;">
+      Winners Gaming Club is a members' room for two original slot designs — <strong>Golden Charge</strong> and
+      <strong>Thunder Herd</strong> — built on exact-math-tuned, Monte-Carlo-validated engines and played entirely
+      with free Club Credits. No card ever touches this site.
+    </p>
+    <div class="btn-row" style="justify-content:center;margin-top:22px;">
+      <% if (user) { %>
+        <a class="btn primary" href="/play">Go to the floor</a>
+      <% } else { %>
+        <a class="btn primary" href="/signup">Join free — get a signup bonus</a>
+        <a class="btn ghost" href="/login">Log in</a>
+      <% } %>
+    </div>
+  </section>
+
+  <section class="grid-3" style="margin:34px 0;">
+    <div class="card">
+      <h3 style="color:var(--gold2);margin-top:0;">Club Credits, always</h3>
+      <p style="color:var(--dim);font-size:14px;margin:0;">Every balance on this site is a Club Credit. Nothing here
+      can be bought, deposited, cashed out, or exchanged for money — it exists purely for play.</p>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--gold2);margin-top:0;">Ledger, not a number</h3>
+      <p style="color:var(--dim);font-size:14px;margin:0;">Your balance is never a single stored figure — it's the
+      running sum of an append-only ledger of every bonus, spin, win, and adjustment. See it yourself in
+      <a href="<%= user ? '/history' : '/signup' %>">your transaction history</a>.</p>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--gold2);margin-top:0;">A real support team</h3>
+      <p style="color:var(--dim);font-size:14px;margin:0;">Every account is looked after by a real person on staff —
+      open a <a href="/chat">support chat</a> any time, whether you're curious how a feature works, want more Club
+      Credits, or want to talk about <a href="/responsible-play">setting a limit</a>.</p>
+    </div>
+  </section>
+
+  <section class="card" style="margin:34px 0;border-color:var(--gold);border-color:color-mix(in srgb, var(--gold) 35%, var(--border));">
+    <h3 style="color:var(--gold2);margin-top:0;">The house always has the edge — that's the point</h3>
+    <p style="color:var(--dim);font-size:14px;max-width:760px;">Both games are tuned to a published RTP around 96%,
+    meaning that for every 100 credits wagered, the math returns about 96 on average — the other 4 are gone for
+    good, every time, no matter how any single spin or session feels. <strong>If these were real dollars, that 4%
+    would be real money lost for nothing but the feeling of another spin</strong> — that's not a flaw to hide, it's
+    exactly how every slot machine, real or simulated, actually works, and it compounds fast the longer you play. If
+    tracking a session ever stops feeling fun, <a href="/responsible-play">this page</a> has real resources and lets
+    you set a limit in seconds.</p>
+  </section>
+
+  <h2 class="section-title" id="the-games">The floor</h2>
+  <section class="grid-2">
+    <div class="card">
+      <h3 style="margin-top:0;color:var(--gold2);font-family:var(--font-display);text-transform:uppercase;letter-spacing:.02em;font-weight:400;font-size:22px;">Golden Charge</h3>
+      <p style="color:var(--dim);">A wild-collector game. Land two or more Bulls and a Charge Hit fires: <strong>every
+      Bull collects the full value of every visible Gold Coin</strong>, then flips into a silver coin for a second
+      prize. Three or more Ranch Gates open a free-games round on hotter reels.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0;color:var(--gold2);font-family:var(--font-display);text-transform:uppercase;letter-spacing:.02em;font-weight:400;font-size:22px;">Thunder Herd</h3>
+      <p style="color:var(--dim);">A hold-&amp;-respin game. Six or more Money Bulls lock the grid and start 3
+      respins that reset on every new prize. Collector Bulls sweep up everything already revealed; Diamond Bulls
+      open a second Stampede phase chasing the Grand.</p>
+    </div>
+  </section>
+
+  <h2 class="section-title">Symbols &amp; payouts</h2>
+  <p style="color:var(--dim);max-width:760px;">Both games play 30 fixed lines left to right. Pays below are shown at
+  the 30-credit reference bet — pick any bet size on the floor and every payout scales with it. Figures are pulled
+  live from the same engine code that runs on the floor, not typed in by hand.</p>
+  <div class="grid-2" id="payoutTables"><p style="color:var(--dim);">Loading paytables…</p></div>
+
+  <h2 class="section-title">How Club Credits work</h2>
+  <div class="grid-3">
+    <div class="card">
+      <h3 style="margin-top:0;color:var(--gold2);">1. Sign up</h3>
+      <p style="color:var(--dim);font-size:14px;">Every new account starts with a fixed 20 Club Credits, automatically
+      — no card, no form, no amount to choose.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0;color:var(--gold2);">2. Play it out</h3>
+      <p style="color:var(--dim);font-size:14px;">Spin at any bet size the floor allows. Every credit you win or lose
+      is its own line in your <a href="<%= user ? '/history' : '/signup' %>">transaction history</a>.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0;color:var(--gold2);">3. Run low? Ask.</h3>
+      <p style="color:var(--dim);font-size:14px;">Down to zero? Open a <a href="/chat">support chat</a> instead of a
+      deposit screen — a real person on the team can top you back up.</p>
+    </div>
+  </div>
+
+  <h2 class="section-title">FAQ</h2>
+  <div id="faqList">
+    <details class="card" style="margin-bottom:10px;"><summary style="cursor:pointer;font-weight:700;color:var(--gold2);">Is any of this real money?</summary>
+      <p style="color:var(--dim);">No. Every credit is a Club Credit with no cash value. There is no deposit method,
+      no withdrawal method, and no path anywhere in this platform that converts a Club Credit into real currency.</p></details>
+    <details class="card" style="margin-bottom:10px;"><summary style="cursor:pointer;font-weight:700;color:var(--gold2);">What does RTP mean?</summary>
+      <p style="color:var(--dim);">Return to player — the long-run share of turnover a game pays back on average.
+      Both games here are tuned to a published target using exact combinatorics and checked against tens of millions
+      of simulated rounds before they're ever offered to play.</p></details>
+    <details class="card" style="margin-bottom:10px;"><summary style="cursor:pointer;font-weight:700;color:var(--gold2);">How is my balance calculated?</summary>
+      <p style="color:var(--dim);">It's never stored as a single editable number. Every bonus, stake, win, and manual
+      adjustment is its own permanent row in a ledger, and your balance is the sum of all of them — the same
+      discipline a real gambling ledger is held to, applied here even though nothing is real money.</p></details>
+    <details class="card"><summary style="cursor:pointer;font-weight:700;color:var(--gold2);">I'm at zero. What now?</summary>
+      <p style="color:var(--dim);">Open a <a href="/chat">support chat</a> and ask — no deposit screen, just a
+      conversation with the team running the club.</p></details>
+  </div>
+
+  <section style="text-align:center;padding:44px 0 20px;">
+    <% if (!user) { %>
+      <a class="btn primary" href="/signup">Join Winners Gaming Club</a>
+    <% } else { %>
+      <a class="btn primary" href="/play">Back to the floor</a>
+    <% } %>
+  </section>
+</div>
+<script>window.WGC_PAYDATA = <%- JSON.stringify(payData) %>;</script>
+<script type="module" src="/js/home.js"></script>
+<%- include('partials/foot') %>

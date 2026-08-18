@@ -1,0 +1,54 @@
+<%- include('partials/head', { title, user, balance, activeNav: 'topup' }) %>
+<div class="container narrow">
+  <div class="page-head">
+    <h1>Add Club Credits</h1>
+    <p>Every method below runs on this club's own simulated gateway — no real card network, PayPal, Apple Pay, or
+    Google Pay is ever contacted. Picking one instantly credits Club Credits to your account, sourced from your
+    assigned admin's float.</p>
+  </div>
+  <div class="stat-tile" style="max-width:220px;margin-bottom:20px;"><label>Balance</label><div class="v"><%= balance.toLocaleString() %></div><small>Club Credits</small></div>
+
+  <% if (error) { %><div class="alert error"><%= error %></div><% } %>
+
+  <% if (!user.assigned_staff_id) { %>
+    <div class="card">
+      <p>You're not routed to a support admin yet, so there's no payment gateway to pay through.</p>
+      <p><a class="btn primary" href="/chat">Go set an Admin ID from support chat</a></p>
+    </div>
+  <% } else if (methods.length === 0) { %>
+    <div class="card">
+      <p>Your assigned admin (<strong><%= user.assigned_staff_id %></strong>) hasn't enabled any payment methods
+      right now.</p>
+      <p><a class="btn ghost" href="/chat">Ask in support chat</a></p>
+    </div>
+  <% } else { %>
+    <div class="card">
+      <form method="post" action="/account/topup">
+        <div class="field">
+          <label>Payment method</label>
+          <select name="method" required>
+            <% methods.forEach(function(m) { %><option value="<%= m.method %>"><%= labels[m.method] %></option><% }); %>
+          </select>
+        </div>
+        <div class="field">
+          <label>Amount</label>
+          <div class="btn-row" style="margin-bottom:8px;">
+            <% [10,20,50,100,200].forEach(function(v) { %>
+              <button type="button" class="btn ghost sm quick-amt" data-v="<%= v %>"><%= v %></button>
+            <% }); %>
+          </div>
+          <input type="number" name="amount" id="topupAmount" min="1" max="100000" step="1" required value="20">
+        </div>
+        <span class="demo-credit-note">Club Credits — no cash value. This runs on the club's internal simulated
+        gateway; nothing is ever actually charged.</span>
+        <div style="margin-top:16px;"><button class="btn primary" type="submit" style="width:100%;">Pay (simulated)</button></div>
+      </form>
+    </div>
+    <script>
+      document.querySelectorAll('.quick-amt').forEach((b) => b.addEventListener('click', () => {
+        document.getElementById('topupAmount').value = b.dataset.v;
+      }));
+    </script>
+  <% } %>
+</div>
+<%- include('partials/foot') %>

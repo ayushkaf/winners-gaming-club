@@ -1,0 +1,52 @@
+<%- include('../partials/head', { title, user, activeNav: 'owner' }) %>
+<div class="container">
+  <div class="page-head"><h1>System configuration</h1><p><a href="/owner">&larr; Owner dashboard</a></p></div>
+  <% if (saved) { %><div class="alert success">Configuration saved.</div><% } %>
+  <div class="card">
+    <form method="post" action="/owner/config">
+      <div class="field">
+        <label>Golden Charge availability</label>
+        <select name="model_a_enabled">
+          <option value="true" <%= config.find(c=>c.key==='model_a_enabled').value==='true' ? 'selected' : '' %>>Enabled</option>
+          <option value="false" <%= config.find(c=>c.key==='model_a_enabled').value==='false' ? 'selected' : '' %>>Disabled (hidden from play page)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Thunder Herd availability</label>
+        <select name="model_b_enabled">
+          <option value="true" <%= config.find(c=>c.key==='model_b_enabled').value==='true' ? 'selected' : '' %>>Enabled</option>
+          <option value="false" <%= config.find(c=>c.key==='model_b_enabled').value==='false' ? 'selected' : '' %>>Disabled (hidden from play page)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Signup bonus</label>
+        <input type="text" value="20 Club Credits — fixed, not configurable" disabled>
+        <span class="hint">Locked by design so every new player gets exactly the same start.</span>
+      </div>
+      <div class="field">
+        <label>Minimum bet (Club Credits)</label>
+        <input type="number" name="min_bet" step="1" min="1" value="<%= config.find(c=>c.key==='min_bet').value %>">
+      </div>
+      <div class="field">
+        <label>Maximum bet (Club Credits)</label>
+        <input type="number" name="max_bet" step="1" min="1" value="<%= config.find(c=>c.key==='max_bet').value %>">
+        <span class="hint">The engine is tuned at a 30-credit reference bet; any bet size scales every payout
+        proportionally, so RTP holds at any amount in this range. Bets well below 30 credits will occasionally round
+        the very smallest pays down to 0 — expected at that scale, same as any real machine below its usual
+        denomination.</span>
+      </div>
+      <button class="btn primary" type="submit">Save configuration</button>
+    </form>
+  </div>
+
+  <h2 class="section-title">Raw config table</h2>
+  <div class="data-table-wrap">
+    <table class="data">
+      <thead><tr><th>Key</th><th>Value</th><th>Last updated</th></tr></thead>
+      <tbody>
+        <% config.forEach(function(c) { %><tr><td><%= c.key %></td><td><%= c.value %></td><td><%= new Date(c.updated_at).toLocaleString() %></td></tr><% }); %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<%- include('../partials/foot') %>

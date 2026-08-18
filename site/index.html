@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Toro Math Lab — Pokie Mechanics Research</title>
+<meta name="description" content="A mathematics research project: two original slot-machine math models, exact-math tuned and Monte Carlo validated, with a playable demo. No gambling, demo credits only.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="banner" role="note">
+  RESEARCH DEMO — NO GAMBLING &middot; demo credits only &middot; nothing can be wagered, won, or purchased
+</div>
+
+<header class="hero">
+  <h1>TORO <span>MATH</span> LAB</h1>
+  <p class="tag">A pokies-mechanics research project: two original math models — a wild-collector game and a
+  hold-&amp;-respin game — built as real engines, tuned with exact mathematics, and validated over tens of
+  millions of simulated spins. Everything on this page runs the same engine code the validation ran.</p>
+</header>
+
+<!-- ================================ 1. DEMO ================================ -->
+<section id="demo">
+  <h2>Playable demo</h2>
+  <div class="machine-wrap">
+    <div class="machine-top">
+      <div class="tabs" id="modelTabs">
+        <button class="tab active" data-model="A">GOLDEN CHARGE <small>collector</small></button>
+        <button class="tab" data-model="B">THUNDER HERD <small>hold &amp; respin</small></button>
+      </div>
+      <div class="denoms">
+        <label>Denom</label>
+        <select id="denomSel"></select>
+      </div>
+    </div>
+
+    <div class="stage">
+      <canvas id="reelCanvas" width="680" height="360"></canvas>
+      <div id="featureOverlay" class="overlay hidden"></div>
+      <div id="msgOverlay" class="msg hidden"></div>
+    </div>
+
+    <div class="machine-bar">
+      <div class="meter"><label>Balance</label><div id="balanceCr">100,000</div><div id="balanceCur" class="cur"></div></div>
+      <div class="meter"><label>Bet</label><div>30</div><div class="cur" id="betCur"></div></div>
+      <div class="meter win"><label>Win</label><div id="winCr">0</div><div id="winCur" class="cur"></div></div>
+      <button id="turboBtn" class="side">TURBO<br><small id="turboState">off</small></button>
+      <button id="spinBtn">SPIN</button>
+    </div>
+    <div id="eventLog" class="event-log" aria-live="polite"></div>
+    <p class="note">Demo credits have no value and cannot be bought, cashed out, or transferred. The reels, features,
+    and value draws are produced by the identical engine code used in the validation runs — nothing is scripted for show.</p>
+  </div>
+</section>
+
+<!-- ============================ 2. SYMBOLS & PAYS =========================== -->
+<section id="symbols">
+  <h2>Symbols &amp; payouts</h2>
+  <p>Both models play 30 fixed lines, left to right, at 30 credits per spin (1 credit per line). Pays are per line
+  bet. The Bull is wild in <em>Golden Charge</em> and substitutes for every paying symbol; the Gate scatter and Gold
+  Coin are never substituted. In <em>Thunder Herd</em> the Money Bull carries a credit value (or a MINI / MINOR /
+  MEGA label) and only pays through the Hold &amp; Respin feature.</p>
+  <div class="cols">
+    <div>
+      <h3>Line pays (both models)</h3>
+      <div id="payTable"></div>
+    </div>
+    <div>
+      <h3>Special symbols</h3>
+      <div id="specialTable"></div>
+      <h3>Coin &amp; jackpot values</h3>
+      <div id="coinTable"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ 3. MODEL COMPARISON ========================= -->
+<section id="compare">
+  <h2>Model comparison</h2>
+  <p>Two deliberately different volatility designs sharing one symbol set and line game. <em>Golden Charge</em>
+  spreads its return across line pays, collect events and free games. <em>Thunder Herd</em> concentrates almost
+  two-thirds of its return into a feature that hits about once every 121 spins — the classic hold-&amp;-respin
+  profile: long quiet stretches, then a large, highly variable payout.</p>
+  <div id="compareTable"></div>
+  <p class="note">"Exact / solved RTP" is the mathematically derived return of the tuned model (closed-form where
+  possible, plus a 16-million-feature structure estimate for Thunder Herd's feature). "Measured" is an independent
+  Monte Carlo run of the finished engines. See the validation reports in the repository for full detail.</p>
+</section>
+
+<!-- ============================ 4. FEATURE EXPLAINERS ======================= -->
+<section id="features">
+  <h2>How the features work</h2>
+
+  <article class="explainer">
+    <h3>Golden Charge — the double collect</h3>
+    <p>Whenever <strong>two or more Bulls</strong> are visible after a spin, a Charge Hit fires:
+    <strong>each Bull separately collects the sum of every visible Gold Coin</strong>. Two Bulls means the full coin
+    sum is paid twice; three Bulls, three times. After collecting, every Bull flips into a silver coin and reveals
+    its own extra prize — a credit amount or a jackpot. Step through a worked example:</p>
+    <div class="worked" id="workedA"></div>
+  </article>
+
+  <article class="explainer">
+    <h3>Thunder Herd — collectors, diamonds, and the Stampede phase</h3>
+    <p>Six or more Money Bulls lock in place and start <strong>3 respins</strong> on a 15-position grid. Every
+    respin, each empty position can land a new prize — and <strong>any</strong> new prize resets the counter to 3.
+    Two special landings change the shape of the feature: a <strong>Collector Bull</strong> arrives carrying the sum
+    of everything already revealed (then sticks like a normal prize), and a <strong>Diamond Bull</strong> is a normal
+    prize that also adds one extra grid position, played in a second <em>Stampede phase</em> after the main grid
+    settles. Fill all 15 main positions — in either phase — or land a prize in every column during the Stampede
+    phase, and the GRAND (1,000&times; bet) is paid on top.</p>
+    <div class="worked" id="workedB"></div>
+  </article>
+</section>
+
+<!-- ============================ 5. FREE GAMES =============================== -->
+<section id="freegames">
+  <h2>Free games (Golden Charge)</h2>
+  <table class="simple">
+    <thead><tr><th>Gates landed (anywhere)</th><th>Free games</th><th>Scatter pay (on top)</th></tr></thead>
+    <tbody>
+      <tr><td>3</td><td>15</td><td>2&times; total bet</td></tr>
+      <tr><td>4</td><td>20</td><td>10&times; total bet</td></tr>
+      <tr><td>5</td><td>25</td><td>100&times; total bet</td></tr>
+    </tbody>
+  </table>
+  <ul>
+    <li>Free games play on separate reel strips with a much higher Bull frequency — Charge Hits fire roughly one
+    free spin in five, versus about one in thirty-six in the base game.</li>
+    <li>Gates landing during free games retrigger: 3/4/5 Gates add 15/20/25 more games.</li>
+    <li>Free games use the triggering spin's bet. Coin values and silver reveals use the same distributions as the
+    base game.</li>
+  </ul>
+</section>
+
+<!-- ============================ 6. FAQ ===================================== -->
+<section id="faq">
+  <h2>FAQ</h2>
+  <div id="faqList"></div>
+</section>
+
+<!-- ============================ 7. DASHBOARD =============================== -->
+<section id="dashboard">
+  <h2>Simulation dashboard</h2>
+  <p>Run the engines right here, in bulk, and watch the measured return converge toward the solved value. This is
+  the same Monte Carlo loop the validation harness uses — each batch is 25,000 full rounds (features included).</p>
+  <div class="dash-controls">
+    <div class="tabs small" id="dashTabs">
+      <button class="tab active" data-model="A">Golden Charge</button>
+      <button class="tab" data-model="B">Thunder Herd</button>
+    </div>
+    <button id="dashRun">Run 1,000,000 spins</button>
+    <button id="dashStop" disabled>Stop</button>
+    <button id="dashReset">Reset</button>
+  </div>
+  <div class="dash-grid">
+    <div class="stat"><label>Spins</label><div id="dSpins">0</div></div>
+    <div class="stat"><label>Live RTP</label><div id="dRtp">—</div><small id="dRtpRef"></small></div>
+    <div class="stat"><label>Hit rate</label><div id="dHit">—</div></div>
+    <div class="stat"><label>Features</label><div id="dFeat">0</div><small id="dFeatFreq"></small></div>
+    <div class="stat"><label>Jackpot labels</label><div id="dJp">—</div></div>
+    <div class="stat"><label>Biggest win</label><div id="dMax">—</div></div>
+  </div>
+  <div class="progress"><div id="dashProg"></div></div>
+  <h3>Spin log <small>(notable events)</small></h3>
+  <div id="dashLog" class="event-log tall"></div>
+</section>
+
+<footer>
+  <p><strong>Toro Math Lab</strong> is a private mathematics research project. It is not a gambling product, offers
+  no real-money play, awards nothing of value, and is not affiliated with, endorsed by, or derived from the assets of
+  any slot-machine manufacturer. All artwork, names, and text are original to this project. The math models are
+  original parameterisations built to studied volatility profiles; source code, tuning method, and validation
+  reports live alongside this page in the project repository.</p>
+</footer>
+
+<script src="engine.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>

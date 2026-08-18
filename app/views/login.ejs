@@ -1,0 +1,42 @@
+<%- include('partials/head', { title, user, activeNav: 'login' }) %>
+<div class="container narrow">
+  <div class="card auth-card">
+    <h2 style="font-family:var(--font-display);text-transform:uppercase;letter-spacing:.02em;color:var(--gold);font-weight:400;font-size:26px;">Log in</h2>
+    <% if (typeof reset !== 'undefined' && reset) { %><div class="alert success">Password changed — log in with your new password.</div><% } %>
+    <% if (error) { %><div class="alert error"><%= error %></div><% } %>
+    <form method="post" action="/login">
+      <div class="field">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required autocomplete="email" value="<%= email || '' %>">
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required autocomplete="current-password">
+      </div>
+      <button class="btn primary" type="submit" style="width:100%;">Log in</button>
+    </form>
+    <p style="margin-top:12px;"><a href="/forgot-password" style="font-size:13.5px;">Forgot your password?</a></p>
+    <p style="margin-top:8px;color:var(--dim);font-size:14px;">New here? <a href="/signup">Create a free account</a> — includes a signup bonus.</p>
+  </div>
+</div>
+
+<div class="container" style="margin-top:8px;">
+  <h2 class="section-title" style="text-align:center;">Two games, two ways to play</h2>
+  <div class="grid-2">
+    <div class="card">
+      <h3 style="margin-top:0;color:var(--gold2);font-family:var(--font-display);text-transform:uppercase;letter-spacing:.02em;font-weight:400;font-size:24px;">Golden Charge</h3>
+      <p style="color:var(--dim);">A wild-collector game. Land two or more Bulls and a Charge Hit fires: every Bull
+      collects the full value of every visible Gold Coin, then flips into a silver coin for a second prize. Three or
+      more Ranch Gates open a free-games round on hotter reels.</p>
+      <a class="btn ghost sm" href="/#the-games">See paytable &amp; details →</a>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0;color:var(--gold2);font-family:var(--font-display);text-transform:uppercase;letter-spacing:.02em;font-weight:400;font-size:24px;">Thunder Herd</h3>
+      <p style="color:var(--dim);">A hold-&amp;-respin game. Six or more Money Bulls lock the grid and start 3
+      respins that reset on every new prize. Collector Bulls sweep up everything already revealed; Diamond Bulls
+      open a second Stampede phase chasing the Grand.</p>
+      <a class="btn ghost sm" href="/#the-games">See paytable &amp; details →</a>
+    </div>
+  </div>
+</div>
+<%- include('partials/foot') %>

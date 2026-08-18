@@ -1,0 +1,53 @@
+<%- include('partials/head', { title, user, balance, activeNav: 'chat' }) %>
+<div class="container">
+  <div class="page-head">
+    <h1><%= user.role === 'user' ? 'Support chat' : `Message your ${managerNoun}` %></h1>
+    <% if (user.role === 'user') { %>
+    <p>Running low on Club Credits? Have a question about how a feature works, or just want to talk about your play?
+    Message the team directly — this is the same place you'd ask for more Club Credits instead of "depositing," and
+    the same place to ask about a break or a limit. See <a href="/responsible-play">responsible play</a>.</p>
+    <% } else { %>
+    <p>Your own line to the <%= managerNoun.toLowerCase() %> who created your account — not the support inbox you use
+    to help the accounts assigned to you (that's <a href="/admin/chat">Support Inbox</a>).</p>
+    <% } %>
+  </div>
+
+  <% if (user.role === 'user') { %>
+  <div class="card" id="assignBar" style="margin-bottom:14px;<%= assignedStaffId ? 'display:none;' : '' %>">
+    <label style="display:block;font-size:13px;color:var(--dim);font-weight:700;margin-bottom:6px;">Admin ID</label>
+    <p class="hint" style="margin:0 0 10px;">Enter the Admin ID you were given (e.g. <code>ADMIN01</code>) to route
+    your messages to that person. Don't have one? Ask any staff member, or just try <code>ADMIN01</code> — it's the
+    club's first support line.</p>
+    <div class="btn-row">
+      <input type="text" id="staffIdInput" placeholder="ADMIN01" style="max-width:180px;text-transform:uppercase;">
+      <button class="btn primary sm" id="staffIdSubmit" type="button">Connect</button>
+    </div>
+    <div id="assignError" class="alert error" style="display:none;margin-top:10px;"></div>
+  </div>
+  <div class="alert success" id="assignedNotice" style="<%= assignedStaffId ? '' : 'display:none;' %>">
+    Routed to <strong id="assignedStaffIdText"><%= assignedStaffId || '' %></strong>.
+    <a href="#" id="changeRouting" style="margin-left:8px;">Change</a>
+  </div>
+  <% } else if (!assignedStaffId) { %>
+  <div class="alert info">No <%= managerNoun.toLowerCase() %> is assigned to your account yet — ask the owner to set
+  one from Staff accounts before you can message them here.</div>
+  <% } else { %>
+  <div class="alert success">Messaging <strong><%= assignedStaffId %></strong>.</div>
+  <% } %>
+
+  <div class="chat-wrap">
+    <div class="chat-main">
+      <div class="chat-messages" id="chatMessages"></div>
+      <div class="chat-pending-image hidden" id="chatPendingImage"></div>
+      <form class="chat-input-row" id="chatForm">
+        <input type="file" id="chatFileInput" accept="image/png,image/jpeg,image/gif,image/webp" hidden>
+        <button class="side-btn" id="chatAttachBtn" type="button" title="Attach a photo or screenshot" <%= assignedStaffId ? '' : 'disabled' %>>📎</button>
+        <input type="text" id="chatInput" placeholder="Type a message… (or paste a screenshot)" maxlength="2000" autocomplete="off" <%= assignedStaffId ? '' : 'disabled' %>>
+        <button class="btn primary" type="submit" <%= assignedStaffId ? '' : 'disabled' %>>Send</button>
+      </form>
+    </div>
+  </div>
+</div>
+<script>window.WGC_CHAT = { isStaff: false, asSelf: true, watchUserId: <%= user.id %>, meId: <%= user.id %>, assignedStaffId: <%- JSON.stringify(assignedStaffId) %> };</script>
+<script src="/js/chat.js"></script>
+<%- include('partials/foot') %>

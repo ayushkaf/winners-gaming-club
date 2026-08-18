@@ -1,0 +1,116 @@
+<%- include('../partials/head', { title, user, activeNav: 'admin' }) %>
+<div class="container wide">
+  <div class="page-head">
+    <h1><%= target.display_name %></h1>
+    <p><%= target.email %> · #<%= target.id %> · joined <%= new Date(target.created_at).toLocaleDateString() %> ·
+    <a href="/admin/users">&larr; all users</a></p>
+  </div>
+
+  <% if (typeof tempPassword !== 'undefined' && tempPassword) { %>
+  <div class="alert success">New temporary password for <%= tempPasswordFor %>: <strong style="font-family:monospace;font-size:15px;"><%= tempPassword %></strong>
+  — give this to them now, it won't be shown again.</div>
+  <% } %>
+
+  <div class="grid-3">
+    <div class="stat-tile"><label>Balance</label><div class="v"><%= balance.toLocaleString() %></div><small>Club Credits</small></div>
+    <div class="stat-tile">
+      <label>Status</label>
+      <div class="v <%= target.disabled ? 'warn' : 'ok' %>"><%= target.disabled ? 'Disabled' : 'Active' %></div>
+      <form method="post" action="/admin/users/<%= target.id %>/<%= target.disabled ? 'enable' : 'disable' %>" style="margin-top:8px;">
+        <button class="btn sm <%= target.disabled ? '' : 'danger' %>" type="submit"><%= target.disabled ? 'Re-enable account' : 'Disable account' %></button>
+      </form>
+    </div>
+    <div class="stat-tile">
+      <label>Support</label>
+      <div style="margin-top:4px;display:flex;gap:8px;flex-wrap:wrap;">
+        <a class="btn ghost sm" href="/admin/chat?user=<%= target.id %>">Open chat</a>
+        <form method="post" action="/admin/users/<%= target.id %>/reset-password" onsubmit="return confirm('Reset this player\'s password? A new one will be shown once.');">
+          <button class="btn ghost sm" type="submit">Reset password</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="section-title">Player details</h2>
+  <div class="card">
+    <div class="grid-3">
+      <div><label class="hint" style="display:block;text-transform:uppercase;font-size:11px;">Assigned to</label>
+        <div style="font-weight:700;"><%= target.assigned_staff_id || 'Unassigned' %></div></div>
+      <div><label class="hint" style="display:block;text-transform:uppercase;font-size:11px;">Address (self-reported, unverified)</label>
+        <div><%= target.address || '—' %></div></div>
+      <div><label class="hint" style="display:block;text-transform:uppercase;font-size:11px;">Email</label>
+        <div><%= target.email %></div></div>
+    </div>
+    <form method="post" action="/admin/users/<%= target.id %>/transfer" class="btn-row" style="margin-top:14px;align-items:flex-end;">
+      <div class="field" style="margin:0;">
+        <label>Transfer to</label>
+        <select name="staffId" style="min-width:220px;">
+          <% staffList.forEach(function(s) { %>
+            <option value="<%= s.staff_id %>" <%= s.staff_id === target.assigned_staff_id ? 'selected' : '' %>><%= s.staff_id %> — <%= s.display_name %> (<%= s.role %>)</option>
+          <% }); %>
+        </select>
+      </div>
+      <button class="btn ghost sm" type="submit">Transfer player</button>
+    </form>
+  </div>
+
+  <h2 class="section-title">Manual Club Credit adjustment</h2>
+  <div class="card">
+    <p class="hint">A positive amount <strong>reloads</strong> this player from your own float (balance-checked,
+    same as <a href="/wallet">Wallet</a>). A negative amount <strong>takes credits out</strong> and puts them
+    straight back into your own float — nothing is ever destroyed or created here, only moved, and it can't take
+    the player below zero.</p>
+    <% if (adjustError) { %><div class="alert error"><%= adjustError %></div><% } %>
+    <form method="post" action="/admin/users/<%= target.id %>/adjust" class="btn-row" style="align-items:flex-end;flex-wrap:wrap;">
+      <div class="field" style="margin:0;"><label>Amount (use a minus sign to remove)</label><input type="number" name="amount" step="1" required style="width:160px;"></div>
+      <div class="field" style="margin:0;flex:1;min-width:260px;"><label>Reason (required — goes in the ledger)</label><input type="text" name="reason" required placeholder="e.g. support ticket #42 — compensating a bug report"></div>
+      <button class="btn primary" type="submit">Apply adjustment</button>
+    </form>
+    <p class="hint" style="margin-top:10px;">Every adjustment is its own permanent ledger row recording your admin ID, the amount, and this reason — it is never a silent balance edit.</p>
+  </div>
+
+  <h2 class="section-title">Responsible play</h2>
+  <div class="card">
+    <% if (limits.self_exclude_until && new Date(limits.self_exclude_until) > new Date()) { %>
+      <div class="alert info">Paused until <strong><%= new Date(limits.self_exclude_until).toLocaleString() %></strong>.</div>
+    <% } %>
+    <p class="hint">Today's net loss so far: <strong><%= todayNetLoss.toLocaleString() %></strong> credits<%= limits.daily_loss_limit != null ? ` (limit: ${limits.daily_loss_limit.toLocaleString()})` : '' %>.
+    A player can always tighten their own limit from their account page; loosening or clearing one — the way you'd
+    do after a support conversation — is staff-only, here.</p>
+    <% if (limitsError) { %><div class="alert error"><%= limitsError %></div><% } %>
+    <form method="post" action="/admin/users/<%= target.id %>/limits" class="btn-row" style="align-items:flex-end;flex-wrap:wrap;">
+      <div class="field" style="margin:0;">
+        <label>Pause play until</label>
+        <input type="datetime-local" name="pauseUntil">
+      </div>
+      <button class="btn ghost sm" type="submit" name="clearPause" value="1">Clear pause</button>
+      <div class="field" style="margin:0;">
+        <label>Daily loss limit (credits)</label>
+        <input type="number" name="dailyLossLimit" min="1" step="1" style="width:160px;">
+      </div>
+      <button class="btn ghost sm" type="submit" name="clearLossLimit" value="1">Clear limit</button>
+      <button class="btn primary" type="submit">Save</button>
+    </form>
+  </div>
+
+  <h2 class="section-title">Ledger — this user</h2>
+  <div class="data-table-wrap">
+    <table class="data">
+      <thead><tr><th>When</th><th>Type</th><th>Model</th><th class="num">Amount</th><th class="num">Balance after</th><th>Detail</th></tr></thead>
+      <tbody>
+        <% entries.forEach(function(e) { %>
+        <tr>
+          <td><%= new Date(e.ts).toLocaleString() %></td>
+          <td><span class="pill <%= e.type %>"><%= e.type.replace('_',' ') %></span></td>
+          <td><%= e.model || '—' %></td>
+          <td class="num <%= e.amount >= 0 ? 'amt-pos' : 'amt-neg' %>"><%= e.amount >= 0 ? '+' : '' %><%= e.amount.toLocaleString() %></td>
+          <td class="num"><%= e.resulting_balance.toLocaleString() %></td>
+          <td class="wrap"><%= e.reason || '' %></td>
+        </tr>
+        <% }); %>
+        <% if (entries.length === 0) { %><tr><td colspan="6" style="color:var(--dim);">No activity yet.</td></tr><% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<%- include('../partials/foot') %>
